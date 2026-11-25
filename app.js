@@ -6,8 +6,8 @@
   //   file    – the uploaded PDF
   //   message – the user's question
   // and returns { "response": string, "citation": string[], "reasoning": string }.
-  const WEBHOOK_URL =
-    "https://initpdang.app.n8n.cloud/webhook-test/25c74e8f-d6c8-46c1-8f1b-0508196d6a85";
+  // The address lives in config.js, which is kept out of Git (see config.example.js).
+  const WEBHOOK_URL = (window.APP_CONFIG && window.APP_CONFIG.WEBHOOK_URL) || "";
   const REQUEST_TIMEOUT_MS = 120000;
 
   // ---------- Contract upload & preview ----------
@@ -188,6 +188,12 @@
   }
 
   async function askWebhook(file, message) {
+    if (!WEBHOOK_URL) {
+      throw new Error(
+        "The assistant isn't set up yet. Copy config.example.js to config.js and add your webhook address."
+      );
+    }
+
     const form = new FormData();
     form.append("file", file, file.name);
     form.append("message", message);
